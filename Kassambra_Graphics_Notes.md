@@ -242,7 +242,7 @@ ggplot(mtcars, aes(wt, mpg)) + geom_point()
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 ```r
-ggsave("myplot1.pdf")  # to PDF
+ggsave("my_plot1.pdf")  # to PDF
 ```
 
 ```
@@ -250,7 +250,7 @@ ggsave("myplot1.pdf")  # to PDF
 ```
 
 ```r
-ggsave("myplot1.png")  # to PNG
+ggsave("my_plot1.png")  # to PNG
 ```
 
 ```
@@ -260,9 +260,9 @@ ggsave("myplot1.png")  # to PNG
 #### Saveing graphic objects
 
 ```r
-pdf("myplot2.pdf")
-myplot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
-print(myplot)
+pdf("my_plot2.pdf")
+my_plot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
+print(my_plot)
 dev.off()
 ```
 
@@ -272,9 +272,9 @@ dev.off()
 ```
 
 ```r
-png("myplot2.png")
-myplot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
-print(myplot)
+png("my_plot2.png")
+my_plot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
+print(my_plot)
 dev.off()
 ```
 
@@ -353,8 +353,7 @@ my_plot <- ggplot(wdata, aes(x = weight))
 - Alternative function: stat_bin()
 - Key arguments: alpha, color, fill, linetype, size
 
-### Example 1
-#### y Values Corresponding to the Count of x Values
+### Example 1: y Values Corresponding to the Count of x Values
 
 
 ```r
@@ -367,7 +366,7 @@ my_plot + geom_area(stat = "bin", color = "black", fill = '#00AFBB')
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
-#### y Values Corresponding to the Density of x Values
+### Example 2: y Values Corresponding to the Density of x Values
 
 ```r
 my_plot + geom_area(aes(y = ..density..), stat = "bin")
@@ -379,7 +378,7 @@ my_plot + geom_area(aes(y = ..density..), stat = "bin")
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
-#### Comparison of Bar Plot and Area Plot
+### Comparison of Bar Plot and Area Plot
 
 ```r
 data("diamonds")
@@ -417,4 +416,154 @@ p + geom_area(stat = "bin")
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
+
+## Density Plot
+### Basics
+- Density plots are useful to visualise the distribution of a continuous variable.
+- Key function: geom_density()
+- Alternative function: stat_density()
+- Key arguments: alpha, color, fill, linetype, size
+- References
+    1. https://en.wikipedia.org/wiki/Density_estimation
+    2. https://de.wikipedia.org/wiki/Kerndichtesch%C3%A4tzer
+
+### Example 1
+
+```r
+my_plot + geom_density()
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+
+```r
+my_plot + geom_density(color = "black", fill = "grey") +
+  geom_vline(aes(xintercept = mean(weight)),
+             color = "#FC4E07", 
+             linetype = "dashed",
+             size = 1)
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-16-2.png)<!-- -->
+
+### Groupings
+#### Example 1: Line Color by Sex
+
+```r
+my_plot + geom_density(aes(color = sex))
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+
+#### Example 2: Fill Color by Sex, semi-transparent fill (alpha = 0.4)
+
+```r
+my_plot + geom_density(aes(fill = sex), 
+                       alpha = 0.4)
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+
+#### Example 3: Line Color and Mean Line by Sex
+
+```r
+head(mu)
+```
+
+```
+## # A tibble: 2 × 2
+##      sex grp.mean
+##   <fctr>    <dbl>
+## 1      F 54.94224
+## 2      M 58.07325
+```
+
+```r
+my_plot + geom_density(aes(color = sex), 
+                        alpha = 0.4) +
+  geom_vline(data = mu,
+             aes(xintercept = grp.mean, 
+                 color = sex),
+             linetype = "dashed")
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+
+### Graphic Property Control
+#### Basics
+- scale_color_manual(), scale_fill_manual(): use custom colors
+- scale_color_brewer(), scale_fill_brewer(): use color palette from RColorBrewer package
+- scale_color_grey(), scale_fill_grey():     use grey color palettes
+
+#### Manually Defined Lines
+##### Example 0: Create Basic Graphic
+
+```r
+my_plot_2 <- my_plot + 
+  geom_density(aes(color = sex)) +
+  geom_vline(data = mu,
+             aes(xintercept = grp.mean, 
+                 color = sex),
+             linetype = "dashed") +
+  theme_minimal()
+```
+
+##### Example 1: Manually Defined Color
+
+```r
+my_plot_2 + scale_color_manual(values = c("#999999", "#E69F00"))
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+
+##### Example 2: Colors Using RColorBrewer Palettes
+
+```r
+my_plot_2 + scale_color_brewer(palette = "Paired")
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+
+##### Example 3: Grey Scale
+
+```r
+my_plot_2 + scale_color_grey()
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+
+#### Manually Defined Fills
+##### Example 0: Create Basic Graphic
+
+```r
+my_plot_3 <- my_plot + 
+  geom_density(aes(fill = sex), alpha = 0.4) +
+  theme_minimal()
+```
+
+##### Example 1: Manuall Fill
+
+```r
+my_plot_3 + scale_fill_manual(
+  values = c("#999999", "#E69F00"))
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+
+##### Example 2: Fill with RColorBrewer Palettes Colors
+
+```r
+my_plot_3 + scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+
+##### Example 3: Fill with Grey Scale Colors
+
+```r
+my_plot_3 + scale_fill_grey() +
+  theme_minimal()
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 
