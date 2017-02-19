@@ -14,9 +14,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 # install.packages(pkgs = "ggplot2", dependencies = TRUE, type = "source")
 library(ggplot2)
+# install.packages(pkgs = "dplyr", dependencies = TRUE, type = "source")
+library(dplyr)
 ```
 
-# Chapter 2: Introduction to ggplot2
+# Introduction to ggplot2
 
 ## Definition of plots
 
@@ -30,27 +32,38 @@ library(ggplot2)
 
 Geometry is defined in geom_*(). Geoms are called layers cause the can occur multiple times and put on top of each other.
 
-## Output plots
-
-- Plots can be stored as a variable and printed using print().  
-- last_plot(): returns last plot modified  
-- ggsave("plot.png", width = 5, height = 5): save the last plot to the current working directory  
-
 ## Data format and preparation
 
 - **Data must be a data frame, containing all information to make a ggplot graphic.**  
-- **Data should be tidy, i. e. columns should be variables, row should be observations.**  
+- **Data should be tidy, i. e. columns should be variables, rows should be observations.**  
 
 ```{r}
-# Load data
+# mtcars
+## Load data
 data(mtcars)
 df <- mtcars[ , c("mpg", "cyl", "wt")]
 
-# Convert dyl to a factor variable
+## Convert dyl to a factor variable
 df$cyl <- as.factor(df$cyl)
 
-# Print a sample of data
+## Print a sample of data
 head(mtcars)
+
+#----------------------------------------------------------
+library(dplyr)
+
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+
+head(wdata)
+
+mu <- wdata %>%
+  group_by(sex) %>%
+  summarise(grp.mean = mean(weight))
+
+head(mu)
 ```
 
 ## ggplot Basics
@@ -93,9 +106,10 @@ wdata = data.frame(
   sex = factor(rep(c("F", "M"), each = 200)),
   weight = c(rnorm(200, 55), rnorm(200, 58)))
 
-# Use geometry function
+print("Use geometry function")
 ggplot(wdata, aes(x = weight)) + geom_density()
 
+print("Use stat function")
 ggplot(wdata, aes(x = weight)) + stat_density()
 ```
 
@@ -122,7 +136,11 @@ ggplot(data = mtcars, aes(x = log2(wt), y = log2(mpg))) +
   geom_point()
 ```
 
-### Saving graphic objects
+### Saving plots
+- Plots can be stored as a variable and printed using print().  
+- last_plot(): returns last plot modified  
+- ggsave("plot.png", width = 5, height = 5): save the last plot to the current working directory  
+
 #### Saving directly from screen
 ```{r}
 ggplot(mtcars, aes(wt, mpg)) + geom_point()
@@ -142,4 +160,3 @@ myplot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 print(myplot)
 dev.off()
 ```
-

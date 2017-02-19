@@ -8,9 +8,28 @@ Georg Maubach
 ```r
 # install.packages(pkgs = "ggplot2", dependencies = TRUE, type = "source")
 library(ggplot2)
+# install.packages(pkgs = "dplyr", dependencies = TRUE, type = "source")
+library(dplyr)
 ```
 
-# Chapter 2: Introduction to ggplot2
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+# Introduction to ggplot2
 
 ## Definition of plots
 
@@ -24,27 +43,22 @@ library(ggplot2)
 
 Geometry is defined in geom_*(). Geoms are called layers cause the can occur multiple times and put on top of each other.
 
-## Output plots
-
-- Plots can be stored as a variable and printed using print().  
-- last_plot(): returns last plot modified  
-- ggsave("plot.png", width = 5, height = 5): save the last plot to the current working directory  
-
 ## Data format and preparation
 
 - **Data must be a data frame, containing all information to make a ggplot graphic.**  
-- **Data should be tidy, i. e. columns should be variables, row should be observations.**  
+- **Data should be tidy, i. e. columns should be variables, rows should be observations.**  
 
 
 ```r
-# Load data
+# mtcars
+## Load data
 data(mtcars)
 df <- mtcars[ , c("mpg", "cyl", "wt")]
 
-# Convert dyl to a factor variable
+## Convert dyl to a factor variable
 df$cyl <- as.factor(df$cyl)
 
-# Print a sample of data
+## Print a sample of data
 head(mtcars)
 ```
 
@@ -56,6 +70,44 @@ head(mtcars)
 ## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
 ## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
 ## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+```
+
+```r
+#----------------------------------------------------------
+library(dplyr)
+
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+
+head(wdata)
+```
+
+```
+##   sex   weight
+## 1   F 53.79293
+## 2   F 55.27743
+## 3   F 56.08444
+## 4   F 52.65430
+## 5   F 55.42912
+## 6   F 55.50606
+```
+
+```r
+mu <- wdata %>%
+  group_by(sex) %>%
+  summarise(grp.mean = mean(weight))
+
+head(mu)
+```
+
+```
+## # A tibble: 2 × 2
+##      sex grp.mean
+##   <fctr>    <dbl>
+## 1      F 54.94224
+## 2      M 58.07325
 ```
 
 ## ggplot Basics
@@ -117,11 +169,26 @@ wdata = data.frame(
   sex = factor(rep(c("F", "M"), each = 200)),
   weight = c(rnorm(200, 55), rnorm(200, 58)))
 
-# Use geometry function
+print("Use geometry function")
+```
+
+```
+## [1] "Use geometry function"
+```
+
+```r
 ggplot(wdata, aes(x = weight)) + geom_density()
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+```r
+print("Use stat function")
+```
+
+```
+## [1] "Use stat function"
+```
 
 ```r
 ggplot(wdata, aes(x = weight)) + stat_density()
@@ -161,7 +228,11 @@ ggplot(data = mtcars, aes(x = log2(wt), y = log2(mpg))) +
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
-### Saving graphic objects
+### Saving plots
+- Plots can be stored as a variable and printed using print().  
+- last_plot(): returns last plot modified  
+- ggsave("plot.png", width = 5, height = 5): save the last plot to the current working directory  
+
 #### Saving directly from screen
 
 ```r
@@ -212,3 +283,4 @@ dev.off()
 ##   2
 ```
 
+#
