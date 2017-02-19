@@ -160,3 +160,76 @@ myplot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 print(myplot)
 dev.off()
 ```
+
+# Plotting **ONE** variable (discrete or continuous)
+
+```{r}
+library(dplyr)
+
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+
+head(wdata)
+
+mu <- wdata %>%
+  group_by(sex) %>%
+  summarise(grp.mean = mean(weight))
+
+head(mu)
+```
+
+```{r}
+my_plot <- ggplot(wdata, aes(x = weight))
+```
+
+## Overview of possible graphics
+
+### Discrete Variables
+
+- geom_bar(): bar plot
+
+### Continuous Variables
+
+- geom_area():      area plot
+- geom_density():   density plot
+- geom_dotplot():   dot plot
+- geom_freqpoly():  frequency polygon
+- geom_histogram(): histogram plot
+- geom_ecdf():      empirical cumulative density function
+- stat_qq():        quantile-quantile plot
+
+## Bar plot
+
+## Area Plot
+### Basics
+- Definitio: Area plots are the continuous analog to a stacked bar chart.
+- Key function: geom_area()
+- Alternative function: stat_bin()
+- Key arguments: alpha, color, fill, linetype, size
+
+### Example 1
+#### y Values Corresponding to the Count of x Values
+
+```{r}
+my_plot + geom_area(stat = "bin", color = "black", fill = '#00AFBB')
+```
+
+#### y Values Corresponding to the Density of x Values
+```{r}
+my_plot + geom_area(aes(y = ..density..), stat = "bin")
+```
+
+#### Comparison of Bar Plot and Area Plot
+```{r}
+data("diamonds")
+head(diamonds)
+
+p <- ggplot(diamonds, aes(x = price, fill = cut))
+
+p + geom_bar(stat = "bin")
+
+p + geom_area(stat = "bin")
+```
+

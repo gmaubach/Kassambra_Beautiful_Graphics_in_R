@@ -283,4 +283,138 @@ dev.off()
 ##   2
 ```
 
-#
+# Plotting **ONE** variable (discrete or continuous)
+
+
+```r
+library(dplyr)
+
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+
+head(wdata)
+```
+
+```
+##   sex   weight
+## 1   F 53.79293
+## 2   F 55.27743
+## 3   F 56.08444
+## 4   F 52.65430
+## 5   F 55.42912
+## 6   F 55.50606
+```
+
+```r
+mu <- wdata %>%
+  group_by(sex) %>%
+  summarise(grp.mean = mean(weight))
+
+head(mu)
+```
+
+```
+## # A tibble: 2 × 2
+##      sex grp.mean
+##   <fctr>    <dbl>
+## 1      F 54.94224
+## 2      M 58.07325
+```
+
+
+```r
+my_plot <- ggplot(wdata, aes(x = weight))
+```
+
+## Overview of possible graphics
+
+### Discrete Variables
+
+- geom_bar(): bar plot
+
+### Continuous Variables
+
+- geom_area():      area plot
+- geom_density():   density plot
+- geom_dotplot():   dot plot
+- geom_freqpoly():  frequency polygon
+- geom_histogram(): histogram plot
+- geom_ecdf():      empirical cumulative density function
+- stat_qq():        quantile-quantile plot
+
+## Bar plot
+
+## Area Plot
+### Basics
+- Definitio: Area plots are the continuous analog to a stacked bar chart.
+- Key function: geom_area()
+- Alternative function: stat_bin()
+- Key arguments: alpha, color, fill, linetype, size
+
+### Example 1
+#### y Values Corresponding to the Count of x Values
+
+
+```r
+my_plot + geom_area(stat = "bin", color = "black", fill = '#00AFBB')
+```
+
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+#### y Values Corresponding to the Density of x Values
+
+```r
+my_plot + geom_area(aes(y = ..density..), stat = "bin")
+```
+
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+#### Comparison of Bar Plot and Area Plot
+
+```r
+data("diamonds")
+head(diamonds)
+```
+
+```
+##   carat       cut color clarity depth table price    x    y    z
+## 1  0.23     Ideal     E     SI2  61.5    55   326 3.95 3.98 2.43
+## 2  0.21   Premium     E     SI1  59.8    61   326 3.89 3.84 2.31
+## 3  0.23      Good     E     VS1  56.9    65   327 4.05 4.07 2.31
+## 4  0.29   Premium     I     VS2  62.4    58   334 4.20 4.23 2.63
+## 5  0.31      Good     J     SI2  63.3    58   335 4.34 4.35 2.75
+## 6  0.24 Very Good     J    VVS2  62.8    57   336 3.94 3.96 2.48
+```
+
+```r
+p <- ggplot(diamonds, aes(x = price, fill = cut))
+
+p + geom_bar(stat = "bin")
+```
+
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+
+```r
+p + geom_area(stat = "bin")
+```
+
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
+
