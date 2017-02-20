@@ -65,6 +65,7 @@ install.packages(
 library(ggplot2)
 ```
 
+- - -
 
 # Introduction to ggplot2
 ## Terms
@@ -211,6 +212,7 @@ my_plot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 print(my_plot)
 dev.off()
 ```
+- - -
 
 # Plotting **ONE** variable (discrete or continuous)
 
@@ -255,7 +257,7 @@ my_plot <- ggplot(wdata, aes(x = weight))
 
 ## Area Plot
 ### Basics
-- Definitio: Area plots are the continuous analog to a stacked bar chart.
+- Definition: Area plots are the continuous analog to a stacked bar chart.
 - Key function: geom_area()
 - Alternative function: stat_bin()
 - Key arguments: alpha, color, fill, linetype, size
@@ -385,4 +387,113 @@ my_plot_3 + scale_fill_brewer(palette = "Dark2") +
 my_plot_3 + scale_fill_grey() +
   theme_minimal()
 ```
+
+## Dot Plot
+
+## Frequency Polygon
+
+## Histogram Plot
+### Basics
+- Definition: Histogram plots represent a distribution of a continuous variable by dividing into bins and counting the number of observations in each bin.
+- Key function: geom_histogram()
+- Alternative function: stat_bin()
+- Key arguments: alpha, color, fill, linetype, size
+- Adjustments: "identity" (or position_identity()), "stack" (or position_stack()), "dodge" (or position_dodge())
+- Defaults: "stack", bins = 30, y axis = count
+
+#### Example 1: y Values Corresponding to the Count of x Values
+##### Basic plot
+```{r}
+my_plot + geom_histogram()
+```
+
+###### Change the number of bins
+```{r}
+my_plot + geom_histogram(bins = 50)
+```
+
+###### Change line color and fill color, add mean line
+```{r}
+my_plot + 
+  geom_histogram(color = "black", fill = "grey") +
+  geom_vline(
+    aes(xintercept = mean(weight)),
+    color = "#FC4E07",
+    linetype = "dashed",
+    size = 1)
+```
+
+**Note**
+Instead of changing the number of bins with bins = <number> the bindwidth can be changed using binswidth = <number>.
+
+#### Example 2: y Values Corresponding to the density of x Values
+```{r}
+my_plot + geom_histogram(aes(y = ..density..))
+```
+
+### Change Colors by Groups
+#### Change line colors by sex
+```{r}
+my_plot + geom_histogram(
+  aes(color = sex), 
+  fill = "white",
+  position = "stack")  # "stack" is default
+```
+
+#### Position adjustment "identity" (overlaid)
+```{r}
+my_plot + 
+  geom_histogram(
+    aes(color = sex),
+    fill = "white",
+    alpha = 0.6,
+    position = "identity")
+```
+
+#### Position adjustment: "dodge" (interleaved) and mean lines by sex
+```{r}
+my_plot + 
+  geom_histogram(
+    aes(color = sex),
+    fill = "white",
+    position = "dodge") +
+  geom_vline(
+    data = mu,
+    aes(xintercept = grp.mean,
+        color = sex),
+    linetype = "dashed")
+```
+
+### Graphic Property Control
+#### Basics
+•scale_color_manual(), scale_fill_manual(): use custom colors
+•scale_color_brewer(), scale_fill_brewer(): use color palette from RColorBrewer package
+•scale_color_grey(), scale_fill_grey(): use grey color palettes
+
+
+#### Manually Defined Lines
+##### Example 1: Change outline color manually
+```{r}
+my_plot + 
+  geom_histogram(
+    aes(color = sex),
+    fill = "white",  # fill IN geom NOT in aes !!!
+    alpha = 0.4,
+    position = "identity") +
+  scale_color_manual(values = c("#00AFBB", "#E7B800"))
+```
+
+##### Example 2: Change fill and outline color manually
+```{r}
+my_plot + 
+  geom_histogram(
+    aes(color = sex,
+        fill = sex),  # fill NOT in geom BUT in aes !!!
+    alpha = 0.4,
+    position = "identity") +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800"))
+```
+
+
 
