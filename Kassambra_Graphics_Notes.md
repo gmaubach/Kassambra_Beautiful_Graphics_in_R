@@ -666,7 +666,7 @@ my_plot + geom_histogram(aes(y = ..density..))
 my_plot + geom_histogram(
   aes(color = sex), 
   fill = "white",
-  position = "stack")
+  position = "stack")  # "stack" is default
 ```
 
 ```
@@ -758,5 +758,51 @@ my_plot +
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
+### Combine Histogram and Density Plots
+- Plot histogram with density values on y-axis (instead of count values).
+- Add density plot with transparent density plot.
+
+#### Histogram with Density Plot
+- Histogram with transparent filled density plot overlaid.
 
 
+```r
+my_plot + 
+  geom_histogram(
+    aes(y = ..density..),
+    color = "black",  # color IN geom NOT in aes
+    fill = "white") +  # fill in geam NOT in aes
+  geom_density(
+    alpha = 0.2,
+    fill = "#FF6666")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+
+#### Histogram with color by groups
+- Histogram with line density plot overlaid.
+
+
+```r
+my_plot + 
+  geom_histogram(
+    aes(
+      y = ..density..,
+      color = sex,  # color NOT in geom BUT in aes
+      fill = sex),  # fill  NOT in geom BUT in aes
+    alpha = 0.5,
+    position = "identity") + 
+  geom_density(
+    aes(color = sex),
+    size = 1)
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
