@@ -1,50 +1,51 @@
-# Kassambra_Graphics_Notes
-Georg Maubach  
-19 Februar 2017  
+# Beautiful Graphics
+`r format(Sys.time(), '%d %B %Y')`  
 
 
 
+The is http://www.sthda.com/english/wiki/ggplot2-essentials.
+
+# Introduction
+## Installing and Loading ggplot2
 
 ```r
-# install.packages(pkgs = "ggplot2", dependencies = TRUE, type = "source")
+warning("Use type = 'source' only if you have configured a C++ compiler.")
+
+local({
+  r = getOption("repos")
+  r["CRAN"] = "https://cran.rstudio.com/"
+  r["CRANextra"] <- "http://www.stats.ox.ac.uk/pub/RWin"
+  r["CRAN_de"] <- "https://cran.uni-muenster.de/"
+  options(repos = r)
+})
+
+install.packages(
+  pkgs = "ggplot2", 
+  dependencies = TRUE,
+  type = "source")
+
 library(ggplot2)
-# install.packages(pkgs = "dplyr", dependencies = TRUE, type = "source")
-library(dplyr)
 ```
 
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
 
 # Introduction to ggplot2
+## Terms
+A plot can be divided into **3** fundumental parts:
+**Plot = data + Aesthetics + Geometry**.
 
-## Definition of plots
-
-**Plot = data + Aesthetics + Geometry**
-
-- data: a data frame  
-- Aesthetics:
+- **data**: a data frame
+- **Aesthetics**: describe the mapping of variables to visual properties of geometry.
     1. indicate the x and y variables,  
-    2. control color, size, shape of points, etc.  
-- Geometry: defines the type of graphic, e. g. histogram, box plot, etc.
+    2. control color, size, shape of points, etc. 
+- **Geometry**: describe the type of graphic, e.g. histogram, box plot, line plot, scatter plot, etc.
 
 Geometry is defined in geom_*(). Geoms are called layers cause the can occur multiple times and put on top of each other.
 
-## Data format and preparation
+### Further reading
+- http://docs.ggplot2.org/0.9.3/aes.html
+- http://docs.ggplot2.org/current/vignettes/ggplot2-specs.html
 
+## Data format and preparation
 - **Data must be a data frame, containing all information to make a ggplot graphic.**  
 - **Data should be tidy, i. e. columns should be variables, rows should be observations.**  
 
@@ -75,7 +76,26 @@ head(mtcars)
 ```r
 #----------------------------------------------------------
 library(dplyr)
+```
 
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 set.seed(1234)
 wdata <- data.frame(
   sex = factor(rep(c("F", "M"), each = 200)),
@@ -103,7 +123,7 @@ head(mu)
 ```
 
 ```
-## # A tibble: 2 × 2
+## # A tibble: 2 x 2
 ##      sex grp.mean
 ##   <fctr>    <dbl>
 ## 1      F 54.94224
@@ -114,6 +134,7 @@ head(mu)
 ### ggplot basic example
 
 ```r
+library(ggplot2)
 # Basic scatter plot
 ggplot(data = mtcars, aes(x = wt, y = mpg)) +
   geom_point()
@@ -154,7 +175,7 @@ ggpoints(data = mtcars, x_name = "wt", y_name = "mpg")
 ```
 
 ```
-## geom_smooth: method="auto" and size of largest group is <1000, so using loess. Use 'method = x' to change the smoothing method.
+## `geom_smooth()` using method = 'loess'
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-4-2.png)<!-- -->
@@ -257,7 +278,7 @@ ggsave("my_plot1.png")  # to PNG
 ## Saving 7 x 5 in image
 ```
 
-#### Saveing graphic objects
+#### Saving graphic objects
 
 ```r
 pdf("my_plot2.pdf")
@@ -316,7 +337,7 @@ head(mu)
 ```
 
 ```
-## # A tibble: 2 × 2
+## # A tibble: 2 x 2
 ##      sex grp.mean
 ##   <fctr>    <dbl>
 ## 1      F 54.94224
@@ -361,7 +382,7 @@ my_plot + geom_area(stat = "bin", color = "black", fill = '#00AFBB')
 ```
 
 ```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
@@ -373,7 +394,7 @@ my_plot + geom_area(aes(y = ..density..), stat = "bin")
 ```
 
 ```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
@@ -386,13 +407,15 @@ head(diamonds)
 ```
 
 ```
-##   carat       cut color clarity depth table price    x    y    z
-## 1  0.23     Ideal     E     SI2  61.5    55   326 3.95 3.98 2.43
-## 2  0.21   Premium     E     SI1  59.8    61   326 3.89 3.84 2.31
-## 3  0.23      Good     E     VS1  56.9    65   327 4.05 4.07 2.31
-## 4  0.29   Premium     I     VS2  62.4    58   334 4.20 4.23 2.63
-## 5  0.31      Good     J     SI2  63.3    58   335 4.34 4.35 2.75
-## 6  0.24 Very Good     J    VVS2  62.8    57   336 3.94 3.96 2.48
+## # A tibble: 6 x 10
+##   carat       cut color clarity depth table price     x     y     z
+##   <dbl>     <ord> <ord>   <ord> <dbl> <dbl> <int> <dbl> <dbl> <dbl>
+## 1  0.23     Ideal     E     SI2  61.5    55   326  3.95  3.98  2.43
+## 2  0.21   Premium     E     SI1  59.8    61   326  3.89  3.84  2.31
+## 3  0.23      Good     E     VS1  56.9    65   327  4.05  4.07  2.31
+## 4  0.29   Premium     I     VS2  62.4    58   334  4.20  4.23  2.63
+## 5  0.31      Good     J     SI2  63.3    58   335  4.34  4.35  2.75
+## 6  0.24 Very Good     J    VVS2  62.8    57   336  3.94  3.96  2.48
 ```
 
 ```r
@@ -402,7 +425,7 @@ p + geom_bar(stat = "bin")
 ```
 
 ```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
@@ -412,7 +435,7 @@ p + geom_area(stat = "bin")
 ```
 
 ```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](Kassambra_Graphics_Notes_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
@@ -470,7 +493,7 @@ head(mu)
 ```
 
 ```
-## # A tibble: 2 × 2
+## # A tibble: 2 x 2
 ##      sex grp.mean
 ##   <fctr>    <dbl>
 ## 1      F 54.94224

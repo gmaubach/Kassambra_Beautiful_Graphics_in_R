@@ -1,0 +1,86 @@
+---
+title: "Beautiful Graphics"
+subtitle: "Notes to the book by Alboukadel Kassambara"
+author:
+- name: "Georg Maubach"
+  affiliation: "Veikko Consulting"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    keep_md: yes
+    number_sections: yes
+    self_contained: yes
+    toc: no
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+    toc_title: "Table of Contents"
+  pdf_document:
+    keep_md: yes
+    number_sections: yes
+    toc: no
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+    toc_title: "Table of Contents"
+  word_document:
+    toc: no
+    toc_depth: 3
+keywords: graphics, notes, ggplot2
+linestretch: 1
+fontsize: 11pt
+tags:
+- graphics
+- notes
+- ggplot2
+abstract: |
+  This document contains notes while reading the book.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+The [books web site](http://www.sthda.com/english/wiki/ggplot2-essentials).
+
+# Introduction
+## Terms
+**Please note:**  
+A plot can be divided into **3** fundumental parts:
+**Plot = data + Aesthetics + Geometry**.
+
+- **data**: a data frame
+- **Aesthetics**: describe the mapping of variables to visual properties of geometry.
+- **Geometry**: describe the type of graphic, e.g. histogram, box plot, line plot, scatter plot, etc.
+
+### Further reading
+- [Aesthetics Documentation](http://docs.ggplot2.org/0.9.3/aes.html)
+- [Aesthetics Specification](http://docs.ggplot2.org/current/vignettes/ggplot2-specs.html)
+
+## Installing and Loading ggplot2
+```{r eval = FALSE}
+warning("Use type = 'source' only if you have configured a C++ compiler.")
+
+local({
+  r = getOption("repos")
+  r["CRAN"] = "https://cran.rstudio.com/"
+  r["CRANextra"] <- "http://www.stats.ox.ac.uk/pub/RWin"
+  r["CRAN_de"] <- "https://cran.uni-muenster.de/"
+  options(repos = r)
+})
+
+install.packages(
+  pkgs = "ggplot2", 
+  dependencies = TRUE,
+  type = "source")
+
+library(ggplot2)
+```
+
+## Working with ggplot2
+- **Please note:**  
+  In order for ggplot2 to work properly the data should be tidy, i.e. observations shall be rows, columns should be the characteristics.
+- The output of a plot can be kept as a variable and printed any time using the print() function.
+- last_plot() returns the last created plot for modification.
+- ggsave("plot.png", width = 5, height = 5) save the last plot in the current working directory.

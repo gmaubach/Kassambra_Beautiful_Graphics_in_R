@@ -1,39 +1,89 @@
 ---
-title: "Kassambra_Graphics_Notes"
-author: "Georg Maubach"
-date: "19 Februar 2017"
-output: 
-  html_document: 
+title: "Beautiful Graphics"
+subtitle: "Notes to the book by Alboukadel Kassambara"
+author:
+- name: "Georg Maubach"
+  affiliation: "Veikko Consulting"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
     keep_md: yes
+    number_sections: yes
+    self_contained: yes
+    toc: no
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+    toc_title: "Table of Contents"
+  pdf_document:
+    keep_md: yes
+    number_sections: yes
+    toc: no
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+    toc_title: "Table of Contents"
+  word_document:
+    toc: no
+    toc_depth: 3
+keywords: graphics, notes, ggplot2
+linestretch: 1
+fontsize: 11pt
+tags:
+- graphics
+- notes
+- ggplot2
+abstract: |
+  This document contains notes while reading the book.
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
-# install.packages(pkgs = "ggplot2", dependencies = TRUE, type = "source")
+The is http://www.sthda.com/english/wiki/ggplot2-essentials.
+
+# Introduction
+## Installing and Loading ggplot2
+```{r eval = FALSE}
+warning("Use type = 'source' only if you have configured a C++ compiler.")
+
+local({
+  r = getOption("repos")
+  r["CRAN"] = "https://cran.rstudio.com/"
+  r["CRANextra"] <- "http://www.stats.ox.ac.uk/pub/RWin"
+  r["CRAN_de"] <- "https://cran.uni-muenster.de/"
+  options(repos = r)
+})
+
+install.packages(
+  pkgs = "ggplot2", 
+  dependencies = TRUE,
+  type = "source")
+
 library(ggplot2)
-# install.packages(pkgs = "dplyr", dependencies = TRUE, type = "source")
-library(dplyr)
 ```
 
+
 # Introduction to ggplot2
+## Terms
+A plot can be divided into **3** fundumental parts:
+**Plot = data + Aesthetics + Geometry**.
 
-## Definition of plots
-
-**Plot = data + Aesthetics + Geometry**
-
-- data: a data frame  
-- Aesthetics:
+- **data**: a data frame
+- **Aesthetics**: describe the mapping of variables to visual properties of geometry.
     1. indicate the x and y variables,  
-    2. control color, size, shape of points, etc.  
-- Geometry: defines the type of graphic, e. g. histogram, box plot, etc.
+    2. control color, size, shape of points, etc. 
+- **Geometry**: describe the type of graphic, e.g. histogram, box plot, line plot, scatter plot, etc.
 
 Geometry is defined in geom_*(). Geoms are called layers cause the can occur multiple times and put on top of each other.
 
-## Data format and preparation
+### Further reading
+- http://docs.ggplot2.org/0.9.3/aes.html
+- http://docs.ggplot2.org/current/vignettes/ggplot2-specs.html
 
+## Data format and preparation
 - **Data must be a data frame, containing all information to make a ggplot graphic.**  
 - **Data should be tidy, i. e. columns should be variables, rows should be observations.**  
 
@@ -69,6 +119,7 @@ head(mu)
 ## ggplot Basics
 ### ggplot basic example
 ```{r}
+library(ggplot2)
 # Basic scatter plot
 ggplot(data = mtcars, aes(x = wt, y = mpg)) +
   geom_point()
