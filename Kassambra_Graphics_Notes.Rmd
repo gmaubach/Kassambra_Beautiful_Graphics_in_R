@@ -241,7 +241,7 @@ my_plot <- ggplot(wdata, aes(x = weight))
 
 ### Discrete Variables
 
-- geom_bar(): bar plot
+- geom_bar():       bar plot
 
 ### Continuous Variables
 
@@ -391,6 +391,9 @@ my_plot_3 + scale_fill_grey() +
 ## Dot Plot
 
 ## Frequency Polygon
+%NEXT%
+%TODO%
+
 
 ## Histogram Plot
 ### Basics
