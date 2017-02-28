@@ -268,7 +268,6 @@ ggplot(mpg, aes(fl)) +
   theme_minimal()
 ```
 
-
 ## Area Plot
 ### Basics
 - Definition: Area plots are the continuous analog to a stacked bar chart.
@@ -637,6 +636,8 @@ my_plot <- ggplot(mtcars, aes(sample = mpg))
 my_plot + stat_qq()
 ```
 
+**? Where does "sample" in aes() come from?***
+
 ```{r}
 my_plot + stat_qq(
   aes(
@@ -645,5 +646,427 @@ my_plot + stat_qq(
       values = c("#00AFBB", "#E7B800", "#FC4E07"))
 ```
 
+# Plotting TWO variables X and Y (discrete or continuous)
+```{r}
+library(ggplot2)
+data(mtcars)
+mtcars$cyl <- as.factor(mtcars$cyl)
+head(mtcars[ , c("wt", "mpg", "cyl")])
 
+my_plot <- ggplot(
+  mtcars,
+  aes(x = wt,
+      y = mpg))
+```
 
+## Scatter for continuous X and Y
+### Basics
+- Defintion: The data is displayed as a collection of points, each having the value of one variable determining the position on the horizontal axis and the value of the other variable determining the position on the vertical axis. If the points are color-coded, one additional variable can be displayed.[^1]
+- Key function: geom_point()
+- Alternative function: none
+- Key arguments: alpha, color, fill, shape, size
+
+### Plot types
+- geom_point(): scatter plot
+- geom_smooth(): adding a smooth line, e. g. a regression line
+- geom_quantile(): adding quantile lines
+- geom_rug(): adding marginal rug
+- geom_jitter(): avoiding overplotting
+- geom_text(): adding textual annotations
+
+### Graphic Property Control
+- The main poperties can be controlled by:  
+
+geom_point(  
+size,
+color,
+shape)
+
+- The size can be controlled by a third (continuous) variable.  
+
+### Examples
+```{r}
+my_plot + geom_point(color = "#00AFBB")
+
+my_plot + geom_point(color = "#00AFBB", size = 2, shape = 23)
+
+my_plot + geom_point(
+  aes(size = qsec),
+  color = "#00AFBB")
+
+my_plot + geom_point() +
+  geom_text(
+    label = rownames(mtcars),
+    nudge_x = 0.5)
+```
+
+### Scatter Plot With Multiple Groups
+#### Control Graphic Properties AUTOMATICALLY With A Variable
+```{r}
+my_plot + geom_point(
+  aes(shape = cyl))
+
+my_plot + geom_point(
+  aes(shape = cyl,
+      color = cyl))
+
+my_plot + geom_point(
+  aes(shape = cyl,
+      color = cyl,
+      size = cyl))
+```
+
+#### Control Graphic Properites MANUALLY
+##### Functions
+- scale_shape_manual()  
+- scale_color_manual()  
+- scale_size_manual()
+
+##### Examples
+```{r}
+my_plot + geom_point(
+  aes(
+    color = cyl,
+    shape = cyl,
+    size = cyl)) +
+  scale_size_manual(values = c(2, 3, 4))
+
+my_plot + geom_point(
+   aes(
+    color = cyl,
+    shape = cyl)) +
+  scale_size_manual(values = c(3, 16, 17)) +
+  scale_color_manual(values = c("#999999", "#E69F00", "#56B4E9"))
+```
+
+#### Control Graphic Properties Using Palettes
+##### Functions
+- scale_color_grey()
+- scale_color_brewer()
+
+##### Examples
+```{r}
+my_plot + geom_point(
+  aes(
+    color = cyl,
+    shape = cyl)) +
+  scale_color_grey() +
+  theme_minimal()
+
+my_plot + geom_point(
+  aes(
+    color = cyl,
+    shape = cyl)) +
+  scale_color_brewer(palette = "Dark2") +
+  theme_minimal()
+```
+
+### Add Regression Line OR Smoothed Conditional Mean
+#### Basics
+- Definition: ????  
+- Key function: geom_smooth(), geom_abline()  
+- Alternative function: stat_smooth()  
+- Key arguments: alpha, color, fill, shape, linetype, size  
+
+#### General Format
+geom_smooth(
+- method: used smoothing method. Values are "auto", "loess", "lm", "glm", "gam", "rlm" or a formula like "y ~ poly(x, 3)" to specify a degree 3 polynominal.  
+- se (logical): If TRUE confidence interval is displayed around smooth. - fullrange (logical): If TRUE the fit spans the full range of the plot.  
+- level (numeric): Level of confidence intervall to use. Default is 0.95.
+)  
+
+#### Models
+- loess: Is the default value for a small number of observations. It computes a smooth logical regression.
+- lm: Is the linear model.
+
+#### Examples
+```{r}
+# loess method, local regression fitting
+my_plot + geom_point() +
+  geom_smooth()
+
+# Point + regression line
+# Remove the confidence intervall
+my_plot + geom_point() +
+  geom_smooth(
+    method = lm,
+    se = FALSE)
+
+# Add regression line
+# Default confidence intervall
+my_plot + geom_point() +
+  geom_smooth(method = lm)
+```
+
+### Change Colors By Groups
+```{r}
+# Change color and shape by group
+my_plot + geom_point(
+  aes(
+    color = cyl,
+    shape = cyl)) + 
+  geom_smooth(
+    aes(color = cyl,
+        fill = cyl),
+    method = lm)
+
+# Remove confidence intervals
+# Extend the regression lines to full plot range
+my_plot + geom_point(
+  aes(
+    color = cyl,
+    shape = cyl)) + 
+  geom_smooth(
+    aes(color = cyl),
+    method = lm,
+    se = FALSE,
+    fullrange = TRUE)
+```
+
+### Add Quantile Lines From a Quantile Regression
+#### Basics
+- Definition: Quantile lines can be used as a continuous analogue of a geom_boxplot().  
+- Key function: geom_quantile()
+- Alternative function: stat_quantile()
+- Key arguments: alpha, color, linetype, size
+
+#### Example
+```{r}
+ggplot(
+  mpg,
+  aes(cty, hwy)) +
+  geom_point() + 
+  geom_quantile() +
+  theme_minimal()
+```
+
+### Add Marginal Rug To Scatter Plot
+#### Basics
+- Key functions: geom_rug()  
+- Key arguments: alpha, color, size
+
+#### Values For Size
+Size can have a string containing any of "trbl" with stands for
+
+- t = TOP  
+- r = right  
+- b = BOTTOM  
+- l = left  
+
+#### Examples
+```{r}
+# Add marginal rug
+my_plot + geom_point() +
+  geom_rug()
+
+# Change colors by group
+my_plot + geom_point(
+  aes(color = cyl)) +
+  geom_rug(aes(color = cyl))
+
+# Add marginal rugs using faithful data
+data(faithful)
+ggplot(
+  faithful,
+  aes(x = eruptions,
+      y = waiting)) +
+  geom_point() +
+  geom_rug()
+  
+```
+
+### Use Jitter Points To Reduce Overplotting
+#### Basics
+- Key functions: geom_jitter(), position_jitter()  
+- Key arguments: alpha, color, fill, shape, size  
+
+To adjust the extend of jittering the function position_jitter() with the arguments
+
+- width: degree of jitter in x direction  
+- height: degree of jitter in y direction   
+
+is used.
+
+#### Examples
+```{r}
+my_plot <- ggplot(
+  mpg,
+  aes(
+    x = displ,
+    y = hwy))
+
+# Default scatter plot
+my_plot + geom_point()
+
+# Use jitter to reduce overplotting
+my_plot + geom_jitter(
+  position = position_jitter(
+    width = 0.5,
+    height = 0.5))
+```
+
+### Textual Annotations
+#### Basics
+- Key functions: geom_text()
+- Key arguments: alpha, angel, label, color, family, fontface, hjust, lineheight, size, vjust
+
+The argument "label" is used to specify a vector of labels for point annotations.
+
+#### Example
+```{r}
+library(ggplot2)
+data(mtcars)
+mtcars$cyl <- as.factor(mtcars$cyl)
+head(mtcars[ , c("wt", "mpg", "cyl")])
+
+my_plot <- ggplot(
+  mtcars,
+  aes(x = wt,
+      y = mpg))
+
+my_plot + geom_text(
+  aes(
+    label = rownames(mtcars)),
+  size = 3)
+```
+
+## Continuous Bivariabe Distribution
+### Plot Types
+- geom_bin2d(): 2d bin counts  
+- geom_hex(): hexagon binning (package "hexbin" is required)  
+- geom_density_2d(): adding contours from 2d density estimate  
+
+### Heatmap Of 2d Bin Counts
+#### Basics
+- Definition: geom_bin2d() produces a scatter plot with rectangular bins. The number of observations is counted in each bin and displayed as a heatmap.
+- Key function: geom_bin2d()
+- Alternative functions: stat_bin_2d(), stat_summary_2d()
+- Key arguments: alpha, color, fill, linetype, max, size, xmin, ymin, ymax
+
+#### Examples
+```{r}
+data(diamonds)
+head(diamonds[ , c("carat", "price")])
+my_plot <- ggplot(diamonds, aes(carat, price))
+
+# Default plot
+my_plot + geom_bin2d()
+
+# Change the number of bins
+my_plot + geom_bin2d(bins = 15)
+
+# Or specific the width of bins
+my_plot + geom_bin2d(binwidth = c(1, 1000))
+
+# Alternative functions
+my_plot + stat_bin_2d()
+
+my_plot + stat_summary_2d(aes(z = depth))
+```
+
+### Heatmap With Hexagon Binning
+- Key functions: geom_hex()
+- Alternative functions: stat_bin_hex(), stat_summary_hex()
+- Key arguments: alpha, color, fill, size
+
+```{r}
+# install.packages("hexbin")
+library(hexbin)
+
+# Default plot
+my_plot + geom_hex()
+
+# Change the number of bins
+my_plot + geom_hex(bins = 10)
+
+# Alternative functions
+my_plot + stat_bin_hex()
+
+my_plot = stat_summary_hex(aes(z = depth))
+```
+
+### Scatter Plots With 2d Density Estimation
+- Key function: geom_density_2d()
+- Alternative function: stat_density_2d()
+- Key arguments: alpha, color, linetype, size
+
+```{r}
+data("faithful")
+
+# Scatter plot
+sp <- ggplot(
+  faithful,
+  aes(
+    x = eruptions,
+    y = waiting))
+
+# Default plot
+sp + geom_density_2d(color = "#E7B800")
+
+# Add points
+sp + geom_point(color = "#00AFBB") +
+  geom_density_2d(color = "#E7B800")
+
+# Use stats_density_2d with geom = "polygon"
+sp + geom_point() +
+  stat_density_2d(
+    aes(fill = ..level..),
+    geom = "polygon")
+
+# Change the gradient color
+sp + geom_point() +
+  stat_density_2d(
+    aes(fill = ..level..),
+    geom = "polygon") +
+  scale_fill_gradient(
+    low = "#00AFBB",
+    high = "#FC4E07")
+
+# Alternative function
+sp + geom_density_2d()
+```
+
+#### See also
+- geom_contour()
+- stat_contour()
+
+### Continuous Function
+#### Basics
+- Key functions: geom_area(), geom_line(), geom_step()
+- Alternative functions: none
+- Key arguments: alpha, color, fill (for geom_area() only), linetype, size
+
+#### Plot Types
+- geom_area(): area plot
+- geom_line(): line plot with ordered observations ordered by x
+- geom_step(): connecting observations by stairs
+
+#### Examples
+```{r}
+data(economics)
+head(economics)
+
+d <- ggplot(
+  economics,
+  aes(x = date,
+      y = unemploy))
+
+# Area plot
+d + geom_area(fill = "#00AFBB", color = "white")
+
+# Line plot, observations ordered by z
+d + geom_line(color = "#E7B800")
+
+# Stair plot
+set.seed(1234)
+sub_set <- economics[sample(1:nrow(economics), 15) , ]
+ggplot(
+  sub_set,
+  aes(
+    x = date,
+    y = unemploy)) +
+  geom_step(color = "#FC4E07")
+```
+
+# Annotations
+[^1] https://en.wikipedia.org/wiki/Scatter_plot
