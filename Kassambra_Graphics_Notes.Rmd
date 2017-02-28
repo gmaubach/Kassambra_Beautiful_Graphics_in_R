@@ -254,6 +254,20 @@ my_plot <- ggplot(wdata, aes(x = weight))
 - stat_qq():        quantile-quantile plot
 
 ## Bar plot
+### Basics
+- Definition: Bar plot can be used to visualise one discrete variable. A count of each level is plotted.
+- Key functions: geom_bar()
+- Alternvative function: stat_count()
+- Key arguments: alpha, color, fill, linetype, size
+
+### Example
+```{r}
+data(mpg)
+ggplot(mpg, aes(fl)) +
+  geom_bar(fill = "steelblue") +
+  theme_minimal()
+```
+
 
 ## Area Plot
 ### Basics
@@ -605,4 +619,31 @@ my_plot <- ggplot(wdata, aes(x = weight))
 my_plot + stat_ecdf(geom = "point")
 my_plot + stat_ecdf(geom = "step")
 ```
+
+## QQ Plot
+### Basics
+- Definition: QQ plots are used to check whether a given data follows normal distribution. 
+- Key function: stat_qq()
+- Alternvative function: qplot()
+- Key arguments: alpha, color, shape, size
+
+### Examples
+```{r}
+data(mtcars)
+mtcars$cyl <- as.factor(mtcars$cyl)
+head(mtcars[ , c("mpg", "cyl")])
+my_plot <- ggplot(mtcars, aes(sample = mpg))
+
+my_plot + stat_qq()
+```
+
+```{r}
+my_plot + stat_qq(
+  aes(
+    shape = cyl, color = cyl))  + 
+    scale_color_manual(
+      values = c("#00AFBB", "#E7B800", "#FC4E07"))
+```
+
+
 
