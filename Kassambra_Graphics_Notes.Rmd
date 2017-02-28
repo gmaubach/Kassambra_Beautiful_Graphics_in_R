@@ -389,11 +389,64 @@ my_plot_3 + scale_fill_grey() +
 ```
 
 ## Dot Plot
+### Basics
+- Definition: Each observation in a dot plot represents a dot. Dot plots are used to visualise one variable.
+Key function: geom_dotplot()
+Alternative function: none
+Key arguments: alpha, color, fill, dotsize
+
+### Example
+```{r}
+library(ggplot2)
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+head(wdata)
+
+myplot <- ggplot(wdata, aes(x = weight))
+myplot + geom_dotplot(
+  aes(fill = sex))
+```
 
 ## Frequency Polygon
-%NEXT%
-%TODO%
+### Basics
+- Definition: Frequency Polygons are used to visualise the distribution of a continuous variable. It is similar to histogram plots but instead of using bars frequency polygons use lines.
+Key function: geom_freqpoly()
+Alternative function: stat_bin()
+Key arguments: alpha, color, linetype, size
 
+### Example 1
+```{r}
+library(ggplot2)
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+head(wdata)
+```
+
+#### Basic plot
+```{r}
+myplot <- ggplot(wdata, aes(x = weight))
+myplot + geom_freqpoly(bins = 30) +
+  theme_minimal()
+```
+
+#### Change color and linetype by sex, use custom color palettes
+```{r}
+myplot + geom_freqpoly(
+  aes(
+    color = sex,
+    linetype = sex)) +
+  scale_color_manual(values = c("#999999", "#E69F00")) +
+  theme_minimal()
+```
+
+#### Plot density on y-axis
+```{r}
+myplot + geom_freqpoly(aes(y = ..density..))
+```
 
 ## Histogram Plot
 ### Basics
@@ -469,10 +522,9 @@ my_plot +
 
 ### Graphic Property Control
 #### Basics
-•scale_color_manual(), scale_fill_manual(): use custom colors
-•scale_color_brewer(), scale_fill_brewer(): use color palette from RColorBrewer package
-•scale_color_grey(), scale_fill_grey(): use grey color palettes
-
+- scale_color_manual(), scale_fill_manual(): use custom colors  
+- scale_color_brewer(), scale_fill_brewer(): use color palette from RColorBrewer package  
+- scale_color_grey(), scale_fill_grey(): use grey color palettes  
 
 #### Manually Defined Lines
 ##### Example 1: Change outline color manually
@@ -532,3 +584,25 @@ my_plot +
     aes(color = sex),
     size = 1)
 ```
+
+## ECDF plots
+### Basics
+- Definition: ECDF plots report for any given number the percent of individuals that are below that threshold.
+- Key function: stat_ecdf()
+- Alternative function: none
+- Key arguments: alpha, color, linetype, size
+
+### Examples
+```{r}
+library(ggplot2)
+set.seed(1234)
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58)))
+head(wdata)
+
+my_plot <- ggplot(wdata, aes(x = weight))
+my_plot + stat_ecdf(geom = "point")
+my_plot + stat_ecdf(geom = "step")
+```
+
